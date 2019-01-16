@@ -117,8 +117,12 @@ def _create_event_attributes(event_name, disabled):
     """Creates perf_event_attr structure for perf_event_open syscall"""
     attr = pc.PerfEventAttr()
     attr.size = pc.PERF_ATTR_SIZE_VER5
-    attr.type = pc.PerfType.PERF_TYPE_HARDWARE
-    attr.config = pc.HardwareEventNameMap[event_name]
+    if event_name == MetricName.MEMSTALL:
+        attr.type = pc.PerfType.PERF_TYPE_RAW
+        attr.config = pc.RawEventNameMap[event_name]
+    else:
+        attr.type = pc.PerfType.PERF_TYPE_HARDWARE
+        attr.config = pc.HardwareEventNameMap[event_name]
     attr.sample_type = pc.PERF_SAMPLE_IDENTIFIER
     attr.read_format = (pc.PERF_FORMAT_GROUP |
                         pc.PERF_FORMAT_TOTAL_TIME_ENABLED |

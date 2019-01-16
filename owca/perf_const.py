@@ -86,6 +86,7 @@ class EventTypeConfig:
     PERF_COUNT_HW_STALLED_CYCLES_FRONTEND = 7
     PERF_COUNT_HW_STALLED_CYCLES_BACKEND = 8
     PERF_COUNT_HW_REF_CPU_CYCLES = 9
+    PERF_CYCLE_ACTIVITY_STALLS_MEM_ANY = 100664995
 
 
 HardwareEventNameMap = {
@@ -94,6 +95,9 @@ HardwareEventNameMap = {
     MetricName.CACHE_MISSES: EventTypeConfig.PERF_COUNT_HW_CACHE_MISSES,
 }
 
+RawEventNameMap = {
+    MetricName.MEMSTALL: EventTypeConfig.PERF_CYCLE_ACTIVITY_STALLS_MEM_ANY,
+}
 
 class PerfType:
     """

@@ -27,6 +27,7 @@ class MetricName(str, Enum):
     MEM_BW = 'memory_bandwidth'
     LLC_OCCUPANCY = 'llc_occupancy'
     MEM_USAGE = 'memory_usage'
+    MEMSTALL = 'stalls_mem_load'
 
 
 class MetricType(str, Enum):
