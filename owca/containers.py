@@ -23,7 +23,8 @@ from owca.perf import PerfCounters
 from owca.metrics import Measurements, MetricName
 
 
-DEFAULT_EVENTS = (MetricName.INSTRUCTIONS, MetricName.CYCLES, MetricName.CACHE_MISSES, MetricName.MEMSTALL)
+DEFAULT_EVENTS = (MetricName.INSTRUCTIONS, MetricName.CYCLES,
+		  MetricName.CACHE_MISSES, MetricName.MEMSTALL)
 
 
 def flatten_measurements(measurements: List[Measurements]):

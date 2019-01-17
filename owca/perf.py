@@ -26,6 +26,7 @@ LIBC = ctypes.CDLL('libc.so.6', use_errno=True)
 
 log = logging.getLogger(__name__)
 
+
 def _get_cpu_model() -> str:
     with open("/dev/cpu/0/cpuid", "rb") as f:
             b = f.read(32)
@@ -44,10 +45,11 @@ def _get_cpu_model() -> str:
                 return "Skylake"
             elif display_model in [0x3D, 0x47, 0x4F, 0x56]:
                 return "Broadwell"
-            
+
+
 def _get_memstall_config() -> int:
     model = _get_cpu_model()
-    event, umask, cmask = (0,0,0)
+    event, umask, cmask = (0, 0, 0)
     if model == "Skylake":
         event, umask, cmask = (0xA3, 0x14, 20)
     elif model == "Broadwell":
