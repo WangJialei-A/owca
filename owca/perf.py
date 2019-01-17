@@ -26,6 +26,34 @@ LIBC = ctypes.CDLL('libc.so.6', use_errno=True)
 
 log = logging.getLogger(__name__)
 
+def _get_cpu_model() -> str:
+    with open("/dev/cpu/0/cpuid", "rb") as f:
+            b = f.read(32)
+            eax = int(b[16]) + (int(b[17]) << 8) + (int(b[18]) << 16) + (int(b[19]) << 24)
+            model = (eax >> 4) & 0xF
+            family = (eax >> 8) & 0xF
+            extended_model = (eax >> 16) & 0xF
+            extended_family = (eax >> 20) & 0xFF
+            display_family = family
+            if family == 0xF:
+                    display_family += extended_family
+            display_model = model
+            if family == 0x6 or family == 0xF:
+                    display_model += (extended_model << 4)
+            if display_model in [0x4E, 0x5E, 0x55]:
+                return "Skylake"
+            elif display_model in [0x3D, 0x47, 0x4F, 0x56]:
+                return "Broadwell"
+            
+def _get_memstall_config() -> int:
+    model = _get_cpu_model()
+    event, umask, cmask = (0,0,0)
+    if model == "Skylake":
+        event, umask, cmask = (0xA3, 0x14, 20)
+    elif model == "Broadwell":
+        event, umask, cmask = (0xA3, 0x06, 6)
+    return event | (umask << 8) | (cmask << 24)
+
 
 def _get_online_cpus() -> List[int]:
     """Return list with numbers of online cores for current machine"""
@@ -119,7 +147,7 @@ def _create_event_attributes(event_name, disabled):
     attr.size = pc.PERF_ATTR_SIZE_VER5
     if event_name == MetricName.MEMSTALL:
         attr.type = pc.PerfType.PERF_TYPE_RAW
-        attr.config = pc.RawEventNameMap[event_name]
+        attr.config = _get_memstall_config()
     else:
         attr.type = pc.PerfType.PERF_TYPE_HARDWARE
         attr.config = pc.HardwareEventNameMap[event_name]
