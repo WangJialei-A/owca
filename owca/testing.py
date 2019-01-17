@@ -16,8 +16,8 @@
 """Module for independent simple helper functions."""
 
 import os
-from io import StringIO
-from typing import List
+from typing import List, Dict, Union
+from unittest.mock import mock_open, Mock
 
 from owca.detectors import ContendedResource, ContentionAnomaly, _create_uuid_from_tasks_ids
 from owca.mesos import MesosTask, TaskId
@@ -30,19 +30,39 @@ def relative_module_path(module_file, relative_path):
     return os.path.join(dir_path, relative_path)
 
 
-def create_open_mock(sys_file_mock):
+def create_open_mock(paths: Dict[str, Mock]):
+    """Creates open_mocks registry based on multiple path.
+
+    You can access created open_mocks by using __getitem__ functions like this:
+    OpenMock({'path':'body')['path']. Useful for write mocks assertions.
+
+    For typical example of usage, check tests/test_testing:test_create_open_mock()
+
+    """
     class OpenMock:
-        def __init__(self, sys_file):
-            self.file_sys = sys_file
+        def __init__(self, paths: Dict[str, Union[str, Mock]]):
+            self.paths = paths
+            self._mocks = {}
 
         def __call__(self, path, mode='rb'):
-            mock_data = self.file_sys[path]
-            if isinstance(mock_data, str):
-                return StringIO(mock_data)
+            """Used instead of open function."""
+            if path not in self.paths:
+                raise Exception('opening %r is not mocked with OpenMock!' % path)
+            mock_or_str = self.paths[path]
+            if isinstance(mock_or_str, str):
+                mock = mock_open(read_data=mock_or_str)
+                self._mocks[path] = mock
             else:
-                return mock_data(path, mode)
+                mock = self.paths[path]
+            return mock(path, mode)
 
-    return OpenMock(sys_file_mock)
+        def __getitem__(self, path):
+            if path not in self._mocks:
+                raise Exception('mock %r was not open!' % path)
+
+            return self._mocks[path]
+
+    return OpenMock(paths)
 
 
 def anomaly_metrics(contended_task_id: TaskId, contending_task_ids: List[TaskId]):

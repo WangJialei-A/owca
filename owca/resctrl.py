@@ -178,5 +178,8 @@ class ResGroup:
         return {MetricName.MEM_BW: mbm_total, MetricName.LLC_OCCUPANCY: llc_occupancy}
 
     def cleanup(self):
-        log.log(logger.TRACE, 'resctrl: rmdir(%s)', self.resgroup_dir)
-        os.rmdir(self.resgroup_dir)
+        try:
+            log.log(logger.TRACE, 'cleanup: rmdir(%s)', self.resgroup_dir)
+            os.rmdir(self.resgroup_dir)
+        except FileNotFoundError:
+            log.debug('cleanup: directory already does not exist %s', self.resgroup_dir)
