@@ -23,6 +23,7 @@ from io import BytesIO
 from owca import perf
 from owca import perf_const as pc
 from owca import metrics
+from owca.testing import create_open_mock
 
 
 @pytest.mark.parametrize("raw_value,time_enabled,time_running,expected", [
@@ -268,3 +269,11 @@ def test_read_events_zero_values_one_cpu(_open_mock, _get_cgroup_fd_mock):
     # File descriptor mock for single cpu
     prf._group_event_leaders = {0: Mock()}
     assert prf._read_events() == {}
+
+
+@patch('builtins.open', new=create_open_mock({
+    "/dev/cpu/0/cpuid": b"\x14\x00\x00\x00\x47\x65\x6e\x75\x6e\x74\x65\x6c\x69\x6e\x65\x49"
+                        b"\xf1\x06\x04\x00\x00\x08\x20\x00\xff\xfb\xfe\x7f\xff\xfb\xeb\xbf"
+}))
+def test_read_cpu_model():
+    assert pc.CPUModel.BROADWELL == perf._get_cpu_model()

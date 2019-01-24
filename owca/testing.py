@@ -16,7 +16,7 @@
 """Module for independent simple helper functions."""
 
 import os
-from io import StringIO
+from io import StringIO, BytesIO
 from typing import List
 
 from owca.detectors import ContendedResource, ContentionAnomaly, _create_uuid_from_tasks_ids
@@ -39,6 +39,8 @@ def create_open_mock(sys_file_mock):
             mock_data = self.file_sys[path]
             if isinstance(mock_data, str):
                 return StringIO(mock_data)
+            elif isinstance(mock_data, bytes):
+                return BytesIO(mock_data)
             else:
                 return mock_data(path, mode)
 

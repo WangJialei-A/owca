@@ -26,10 +26,13 @@ LIBC = ctypes.CDLL('libc.so.6', use_errno=True)
 
 log = logging.getLogger(__name__)
 
-def _get_cpu_model() -> str:
+
+def _get_cpu_model() -> pc.CPUModel:
     with open("/dev/cpu/0/cpuid", "rb") as f:
             b = f.read(32)
+            print(type(b))
             eax = int(b[16]) + (int(b[17]) << 8) + (int(b[18]) << 16) + (int(b[19]) << 24)
+            print(b[16], b[17], b[18], b[19])
             model = (eax >> 4) & 0xF
             family = (eax >> 8) & 0xF
             extended_model = (eax >> 16) & 0xF
@@ -41,17 +44,22 @@ def _get_cpu_model() -> str:
             if family == 0x6 or family == 0xF:
                     display_model += (extended_model << 4)
             if display_model in [0x4E, 0x5E, 0x55]:
-                return "Skylake"
+                return pc.CPUModel.SKYLAKE
             elif display_model in [0x3D, 0x47, 0x4F, 0x56]:
-                return "Broadwell"
-            
+                return pc.CPUModel.BROADWELL
+            else:
+                return pc.CPUModel.UNKNOWN
+
+
 def _get_memstall_config() -> int:
     model = _get_cpu_model()
-    event, umask, cmask = (0,0,0)
-    if model == "Skylake":
+    event, umask, cmask = (0, 0, 0)
+    if model == pc.CPUModel.SKYLAKE:
         event, umask, cmask = (0xA3, 0x14, 20)
-    elif model == "Broadwell":
+    elif model == pc.CPUModel.BROADWELL:
         event, umask, cmask = (0xA3, 0x06, 6)
+    elif model == pc.CPUModel.UNKNOWN:
+        event, umask, cmask = (0, 0, 0)
     return event | (umask << 8) | (cmask << 24)
 
 
