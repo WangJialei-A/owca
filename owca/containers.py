@@ -14,6 +14,7 @@
 
 
 from typing import List
+import logging
 
 from dataclasses import dataclass
 
@@ -23,6 +24,7 @@ from owca.perf import PerfCounters
 from owca.metrics import Measurements, MetricName
 
 
+log = logging.getLogger(__name__)
 DEFAULT_EVENTS = (MetricName.INSTRUCTIONS, MetricName.CYCLES, MetricName.CACHE_MISSES, MetricName.MEMSTALL)
 
 
@@ -52,11 +54,18 @@ class Container:
             self.resgroup.sync()
 
     def get_measurements(self) -> Measurements:
-        return flatten_measurements([
-            self.cgroup.get_measurements(),
-            self.resgroup.get_measurements() if self.rdt_enabled else {},
-            self.perf_counters.get_measurements(),
-        ])
+        try:
+            return flatten_measurements([
+                self.cgroup.get_measurements(),
+                self.resgroup.get_measurements() if self.rdt_enabled else {},
+                self.perf_counters.get_measurements(),
+            ])
+        except FileNotFoundError:
+            log.debug('Could not read measurements for container %s. '
+                      'Probably the mesos container has died during the current runner iteration.',
+                      self.cgroup_path)
+            # Returning empty measurements.
+            return {}
 
     def cleanup(self):
         if self.rdt_enabled:

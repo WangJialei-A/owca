@@ -105,6 +105,9 @@ class MesosNode(Node):
             return []
 
         for launched_task in state['get_state']['get_tasks']['launched_tasks']:
+            if 'statuses' not in launched_task or not len(launched_task['statuses']):
+                continue
+
             statuses = launched_task['statuses']
             last_status = statuses[-1]  # Assume the last on is the latest state # TODO: confirm
             if last_status['state'] != MESOS_TASK_STATE_RUNNING:

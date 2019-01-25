@@ -1,0 +1,208 @@
+{
+    "get_state": {
+        "get_executors": {
+            "completed_executors": [
+            ],
+            "executors": [
+                {
+                    "executor_info": {
+                        "command": {
+                            "shell": true,
+                            "uris": [
+                                {
+                                    "executable": true,
+                                    "extract": true,
+                                    "value": "/usr/bin/thermos_executor"
+                                }
+                            ],
+                            "value": "${MESOS_SANDBOX=.}/thermos_executor --announcer-ensemble 127.0.0.1:2181 --no-create-user"
+                        },
+                        "container": {
+                            "mesos": {},
+                            "type": "MESOS",
+                            "volumes": [
+                                {
+                                    "container_path": "taskfs",
+                                    "image": {
+                                        "cached": true,
+                                        "docker": {
+                                            "name": "100.64.176.12:80/serenity/tensorflow-train:1"
+                                        },
+                                        "type": "DOCKER"
+                                    },
+                                    "mode": "RO"
+                                }
+                            ]
+                        },
+                        "executor_id": {
+                            "value": "thermos-root-staging14-tf_train--0-0-cf21a16c-85f2-4713-becd-a48b77cfb0cc"
+                        },
+                        "framework_id": {
+                            "value": "e88fac89-2398-4e75-93f3-88cf4c35ec03-0000"
+                        },
+                        "labels": {
+                            "labels": [
+                                {
+                                    "key": "source",
+                                    "value": "root.staging14.tf_train--0.0"
+                                }
+                            ]
+                        },
+                        "name": "AuroraExecutor",
+                        "resources": [
+                            {
+                                "allocation_info": {
+                                    "role": "*"
+                                },
+                                "name": "mem",
+                                "role": "*",
+                                "scalar": {
+                                    "value": 128
+                                },
+                                "type": "SCALAR"
+                            },
+                            {
+                                "allocation_info": {
+                                    "role": "*"
+                                },
+                                "name": "cpus",
+                                "role": "*",
+                                "scalar": {
+                                    "value": 0.25
+                                },
+                                "type": "SCALAR"
+                            }
+                        ],
+                        "source": "root.staging14.tf_train--0.0"
+                    }
+                }
+            ]
+        },
+        "get_frameworks": {
+            "frameworks": [
+                {
+                    "framework_info": {
+                        "checkpoint": true,
+                        "failover_timeout": 1814400,
+                        "hostname": "100.64.176.11",
+                        "id": {
+                            "value": "e88fac89-2398-4e75-93f3-88cf4c35ec03-0000"
+                        },
+                        "name": "Aurora",
+                        "role": "*",
+                        "user": "root",
+                        "webui_url": "http://100.64.176.11:8081"
+                    }
+                }
+            ]
+        },
+        "get_tasks": {
+            "completed_tasks": [
+            ],
+            "launched_tasks": [
+                {
+                    "agent_id": {
+                        "value": "e88fac89-2398-4e75-93f3-88cf4c35ec03-S9"
+                    },
+                    "executor_id": {
+                        "value": "thermos-root-staging14-cassandra--9043-0-9ee9fbf1-b51b-4bb3-9748-6a4327fd7e0e"
+                    },
+                    "framework_id": {
+                        "value": "e88fac89-2398-4e75-93f3-88cf4c35ec03-0000"
+                    },
+                    "labels": {
+                        "labels": [
+                            {
+                                "key": "org.apache.aurora.tier",
+                                "value": "preemptible"
+                            },
+                            {
+                                "key": "org.apache.aurora.metadata.env_uniq_id",
+                                "value": "14"
+                            },
+                            {
+                                "key": "org.apache.aurora.metadata.name",
+                                "value": "cassandra--9043"
+                            },
+                            {
+                                "key": "org.apache.aurora.metadata.workload_uniq_id",
+                                "value": "9043"
+                            },
+                            {
+                                "key": "org.apache.aurora.metadata.application",
+                                "value": "cassandra"
+                            },
+                            {
+                                "key": "org.apache.aurora.metadata.load_generator",
+                                "value": "ycsb"
+                            }
+                        ]
+                    },
+                    "name": "root/staging14/cassandra--9043",
+                    "resources": [
+                        {
+                            "allocation_info": {
+                                "role": "*"
+                            },
+                            "name": "mem",
+                            "role": "*",
+                            "scalar": {
+                                "value": 2048
+                            },
+                            "type": "SCALAR"
+                        },
+                        {
+                            "allocation_info": {
+                                "role": "*"
+                            },
+                            "name": "cpus",
+                            "role": "*",
+                            "scalar": {
+                                "value": 8
+                            },
+                            "type": "SCALAR"
+                        },
+                        {
+                            "allocation_info": {
+                                "role": "*"
+                            },
+                            "name": "ports",
+                            "ranges": {
+                                "range": [
+                                    {
+                                        "begin": 31464,
+                                        "end": 31464
+                                    },
+                                    {
+                                        "begin": 31706,
+                                        "end": 31706
+                                    }
+                                ]
+                            },
+                            "role": "*",
+                            "type": "RANGES"
+                        },
+                        {
+                            "allocation_info": {
+                                "role": "*"
+                            },
+                            "name": "disk",
+                            "role": "*",
+                            "scalar": {
+                                "value": 10240
+                            },
+                            "type": "SCALAR"
+                        }
+                    ],
+                    "state": "TASK_RUNNING",
+                    "status_update_state": "TASK_RUNNING",
+                    "status_update_uuid": "isM8rVfLSXqy7ijkd/66vw==",
+                    "task_id": {
+                        "value": "root-staging14-cassandra--9043-0-9ee9fbf1-b51b-4bb3-9748-6a4327fd7e0e"
+                    }
+                }
+            ]
+        }
+    },
+    "type": "GET_STATE"
+}
