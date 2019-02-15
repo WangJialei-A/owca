@@ -22,11 +22,12 @@ include('../common.aurora')
 
 communication_port = os.environ.get('communication_port', '9042')
 threads = int(os.environ.get('threads') or 8)
-duration=int(os.environ.get('duration') or 90)
+duration=int(os.environ.get('duration') or 30)
 #----------------------------------------------------------------------------------------------------
 
-# For testing purpose set to small number as 1000
-number_of_rows=100000
+# For testing purpose set to small number as 100er@123
+#
+number_of_rows=1000000
 cassandra_stress_cmd=('"while true; do cassandra-stress mixed duration=%ds ' +
                      '-pop seq=1..%d -node %s -port native=%s -rate ' +
                      'threads=%d; done"') % (duration, number_of_rows, application_host_ip,

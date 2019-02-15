@@ -23,7 +23,7 @@ jobs = [
       processes=[
         Process(
           name='tensorflow_benchmark_prediction',
-          cmdline="/tensorflow_benchmark_prediction_wrapper.pex --command '/usr/bin/python3 -u /root/benchmarks/scripts/tf_cnn_benchmarks/tf_cnn_benchmarks.py --eval=True --datasets_use_prefetch=True --batch_group_size=1 --device=cpu --data_format=NHWC --data_name=cifar10 --batch_size=8 --model=resnet56 --train_dir=/saved_model/ --num_epochs=200 --num_intra_threads=1 --num_inter_threads=1' "
+          cmdline="/tensorflow_benchmark_prediction_wrapper.pex --command '/usr/bin/python3 -u /root/benchmarks/scripts/tf_cnn_benchmarks/tf_cnn_benchmarks.py --eval=True --datasets_use_prefetch=True --batch_group_size=1 --device=cpu --data_format=NHWC --data_name=cifar10 --batch_size=1024 --model=resnet56 --train_dir=/saved_model/ --num_epochs=200 --num_intra_threads=20 --num_inter_threads=20' "
             "--metric_name_prefix 'tensorflow_benchmark_' "
             "--stderr 0 --kafka_brokers '{kafka_brokers}' --kafka_topic {kafka_topic} "
             "--log_level {log_level} "
