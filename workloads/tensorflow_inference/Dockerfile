@@ -41,12 +41,12 @@ RUN git clone https://github.com/tensorflow/tensorflow
 RUN cd /tensorflow && \
     git checkout tags/v1.10.1 && \
     tensorflow/tools/ci_build/builds/configured CPU && \
-    bazel build --config=mkl --config=opt //tensorflow/tools/pip_package:build_pip_package && \
+    bazel --batch_cpu_scheduling --io_nice_level 7 build  --jobs 30 --ram_utilization_factor 30 --config=mkl --config=opt //tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /output
 
-ADD /workloads/tensorflow_inference/prep_dataset_fruits.py /prep_dataset_fruits.py
-ADD /workloads/tensorflow_inference/requirements.txt /requirements.txt
-ADD /workloads/tensorflow_inference/kaggle.json /root/.kaggle/kaggle.json
+COPY prep_dataset_fruits.py /prep_dataset_fruits.py
+COPY requirements.txt /requirements.txt
+COPY kaggle.json /root/.kaggle/kaggle.json
 RUN pip3.6 install -r requirements.txt
 RUN python3.6 /prep_dataset_fruits.py
 
@@ -74,14 +74,13 @@ RUN pip3.6 uninstall -y wheel
 RUN rm -rf /tensorflow-pkg
 
 # Add and run resnet50 weights loading script
-ADD /workloads/tensorflow_inference/load_nn_weights.py /load_nn_weights.py
+COPY load_nn_weights.py /load_nn_weights.py
 RUN python3.6 load_nn_weights.py
 
 # Add workload dataset and workload script
 COPY --from=tensorflow /tensorflow-inference/fruits-360 /fruits-360
-ADD /workloads/tensorflow_inference/inference /usr/local/bin/inference
+COPY inference /usr/local/bin/inference
 RUN chmod +x /usr/local/bin/inference
 
 # Add workload wrapper
-ADD //dist/wrapper.pex /wrapper.pex
-
+COPY /dist/wrapper.pex /wrapper.pex

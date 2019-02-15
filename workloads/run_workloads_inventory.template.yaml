@@ -173,3 +173,15 @@ application_hosts:
             cpu: 10
             ram: 50
             disk: 30
+
+      stress_ng:
+        default:
+          count: 1
+          timeout: 30
+          stressor: stream
+          number_workers: 2
+          resources:
+            cpu: 1
+            ram: 1
+            disk: 1
+

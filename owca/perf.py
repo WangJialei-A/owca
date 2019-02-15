@@ -20,7 +20,9 @@ import struct
 from typing import List, Dict, BinaryIO
 
 from owca import perf_const as pc
+from owca import logger
 from owca.metrics import Measurements, MetricName
+from owca.security import SetEffectiveRootUid
 
 LIBC = ctypes.CDLL('libc.so.6', use_errno=True)
 
@@ -28,21 +30,22 @@ log = logging.getLogger(__name__)
 
 
 def _get_cpu_model() -> pc.CPUModel:
-    with open("/dev/cpu/0/cpuid", "rb") as f:
+    with SetEffectiveRootUid():
+        with open("/dev/cpu/0/cpuid", "rb") as f:
             b = f.read(32)
-            print(type(b))
             eax = int(b[16]) + (int(b[17]) << 8) + (int(b[18]) << 16) + (int(b[19]) << 24)
-            print(b[16], b[17], b[18], b[19])
+            log.log(logger.TRACE, '16,17,18,19th bytes from /dev/cpu/0/cpuoid: %b %b %b %b',
+                    b[16], b[17], b[18], b[19])
             model = (eax >> 4) & 0xF
             family = (eax >> 8) & 0xF
             extended_model = (eax >> 16) & 0xF
             extended_family = (eax >> 20) & 0xFF
             display_family = family
             if family == 0xF:
-                    display_family += extended_family
+                display_family += extended_family
             display_model = model
             if family == 0x6 or family == 0xF:
-                    display_model += (extended_model << 4)
+                display_model += (extended_model << 4)
             if display_model in [0x4E, 0x5E, 0x55]:
                 return pc.CPUModel.SKYLAKE
             elif display_model in [0x3D, 0x47, 0x4F, 0x56]:

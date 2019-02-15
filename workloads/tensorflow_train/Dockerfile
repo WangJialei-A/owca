@@ -41,12 +41,12 @@ RUN git clone https://github.com/tensorflow/tensorflow
 RUN cd /tensorflow && \
     git checkout tags/v1.10.1 && \
     tensorflow/tools/ci_build/builds/configured CPU && \
-    bazel build --config=mkl -c opt //tensorflow/tools/pip_package:build_pip_package && \
+    bazel --batch_cpu_scheduling --io_nice_level 7 build  --jobs 30 --ram_utilization_factor 30 --config=mkl -c opt //tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /output
 
-ADD /workloads/tensorflow_train/prep_dataset.py /prep_dataset.py
-ADD /workloads/tensorflow_train/requirements.txt /requirements.txt
-ADD /workloads/tensorflow_train/kaggle.json /root/.kaggle/kaggle.json
+COPY prep_dataset.py /prep_dataset.py
+COPY requirements.txt /requirements.txt
+COPY kaggle.json /root/.kaggle/kaggle.json
 RUN pip3.6 install -r requirements.txt
 RUN python3.6 /prep_dataset.py
 RUN unzip tensorflow-train/dataset2-master.zip
@@ -74,7 +74,7 @@ RUN rm -rf /tensorflow-pkg
 
 # Add workload dataset and workload script
 COPY --from=tensorflow dataset2-master /dataset2-master
-ADD /workloads/tensorflow_train/training /usr/local/bin/training
+COPY training /usr/local/bin/training
 RUN chmod +x /usr/local/bin/training
 
-ADD /dist/wrapper.pex /wrapper.pex
+COPY /dist/wrapper.pex /wrapper.pex

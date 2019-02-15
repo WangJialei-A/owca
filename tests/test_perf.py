@@ -271,25 +271,28 @@ def test_read_events_zero_values_one_cpu(_open_mock, _get_cgroup_fd_mock):
     assert prf._read_events() == {}
 
 
+@patch('owca.perf.SetEffectiveRootUid')
 @patch('builtins.open', new=create_open_mock({
     "/dev/cpu/0/cpuid": b"\x16\x00\x00\x00\x47\x65\x6e\x75\x6e\x74\x65\x6c\x69\x6e\x65\x49"
                         b"\x54\x06\x05\x00\x00\x08\x40\x00\xff\xfb\xfe\x7f\xff\xfb\xeb\xbf"
 }))
-def test_read_skylake_cpu_model():
+def test_read_skylake_cpu_model(*args):
     assert pc.CPUModel.SKYLAKE == perf._get_cpu_model()
 
 
+@patch('owca.perf.SetEffectiveRootUid')
 @patch('builtins.open', new=create_open_mock({
     "/dev/cpu/0/cpuid": b"\x14\x00\x00\x00\x47\x65\x6e\x75\x6e\x74\x65\x6c\x69\x6e\x65\x49"
                         b"\xf1\x06\x04\x00\x00\x08\x20\x00\xff\xfb\xfe\x7f\xff\xfb\xeb\xbf"
 }))
-def test_read_broadwell_cpu_model():
+def test_read_broadwell_cpu_model(*args):
     assert pc.CPUModel.BROADWELL == perf._get_cpu_model()
 
 
+@patch('owca.perf.SetEffectiveRootUid')
 @patch('builtins.open', new=create_open_mock({
     "/dev/cpu/0/cpuid": b"\x0b\x00\x00\x00\x47\x65\x6e\x75\x6e\x74\x65\x6c\x69\x6e\x65\x49"
                         b"\xe5\x06\x01\x00\x00\x08\x10\x00\xfd\xe3\x98\x00\xff\xfb\xeb\xbf"
 }))
-def test_read_unknown_cpu_model():
+def test_read_unknown_cpu_model(*args):
     assert pc.CPUModel.UNKNOWN == perf._get_cpu_model()

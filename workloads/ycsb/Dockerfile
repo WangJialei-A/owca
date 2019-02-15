@@ -29,7 +29,7 @@ RUN tar -C /tmp -xzf /tmp/apache-maven-3.5.4-bin.tar.gz && mv /tmp/apache-maven-
 
 # Apply intel patch that allow to generate variable (sine-shaped) amount of QPS.
 WORKDIR "/opt/ycsb"
-ADD /workloads/ycsb/intel.patch /opt/ycsb/
+COPY intel.patch /opt/ycsb/
 RUN patch -p1 -i intel.patch
 
 # Required for running /opt/ycsb.
@@ -42,6 +42,6 @@ RUN echo 'export M2_HOME=/usr/local/maven' >> /etc/profile.d/maven.sh
 RUN echo 'export PATH=${M2_HOME}/bin:${PATH}' >> /etc/profile.d/maven.sh
 
 # Adding YCSB wrapper
-ADD /dist/ycsb_wrapper.pex /usr/bin/
+COPY /dist/ycsb_wrapper.pex /usr/bin/
 
 ENTRYPOINT ["./bin/ycsb"]

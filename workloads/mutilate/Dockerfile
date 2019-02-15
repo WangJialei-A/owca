@@ -36,4 +36,4 @@ WORKDIR mutilate
 
 RUN git checkout masterless && scons
 
-ADD /dist/mutilate_wrapper.pex /usr/bin/mutilate_wrapper.pex
+COPY /dist/mutilate_wrapper.pex /usr/bin/mutilate_wrapper.pex
